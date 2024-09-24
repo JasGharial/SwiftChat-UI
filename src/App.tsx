@@ -4,13 +4,15 @@
 import './App.css'
 import AppProvider from './providers/app'
 import AppRoutes from './routes'
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   // const [count, setCount] = useState(0)
 
   return (
     <>
+      <Sonner />
       <Toaster />
       <AppProvider>
         <AppRoutes />

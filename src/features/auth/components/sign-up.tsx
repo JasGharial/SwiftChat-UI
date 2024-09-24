@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { ValidateEmail } from "@/utils/validation.utils";
+
+import { signUpUserWithEmailAndPassword } from "../api/register";
+import { useToast } from "@/hooks/use-toast";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +17,7 @@ const defaultFormFields = {
 const SignUp = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password, confirmPassword } = formFields;
+  const { toast } = useToast();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -26,20 +31,21 @@ const SignUp = () => {
   const handleSignupSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (password !== confirmPassword) {
-      console.log('Password and Confirm Password Mismatch')
+    if (!ValidateEmail(email)) {
+      toast({title: "Validation Failed", description: "Please enter a valid format of email", variant: "destructive"});
       return;
     }
 
+    if (password !== confirmPassword) {
+      toast({title: "Validation Failed", description: "Password and Confirm Password Mismatch", variant: "destructive"});
+      return;
+    }
 
-    // try {
-    //   await authenticatUserWithEmailAndPassword(email, password)
-    // } catch (error) {
-    //   if(error.code === 'auth/invalid-credential'){
-    //     alert('Incorrect Email/Password')
-    //   }
-    //   console.log("User Creation: An Error Has Occurred", error)
-    // }
+    try {
+      await signUpUserWithEmailAndPassword(email, password, confirmPassword)
+    } catch (error) {
+      console.log("An Error Occured", error)
+    }
     resetFormFields();
   }
 

@@ -1,5 +1,4 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
-import { toast } from "sonner"
 
 import env from "../config/env";
 
@@ -22,7 +21,7 @@ api.interceptors.response.use(
   },
   (error) => {
     const message = error.response?.data?.message || error.message;
-    toast("An Error has occurred", { description: message });
+    console.log("An Error has occurred", { description: message });
     // useNotifications.getState().addNotification({
     //   type: 'error',
     //   title: 'Error',
