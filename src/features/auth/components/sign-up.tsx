@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { ValidateEmail } from "@/utils/validation.utils";
+import { useNavigate } from "react-router";
+import { AxiosError } from "axios";
+import { useAppStore } from "@/store";
 
 import { signUpUserWithEmailAndPassword } from "../api/register";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +21,8 @@ const SignUp = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password, confirmPassword } = formFields;
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { setUserInfo } = useAppStore();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -42,9 +47,17 @@ const SignUp = () => {
     }
 
     try {
-      await signUpUserWithEmailAndPassword(email, password, confirmPassword)
+      const { data: response } = await signUpUserWithEmailAndPassword(email, password, confirmPassword);
+      if (response.user) {
+        setUserInfo(response.user);
+        navigate("/profile");
+      }
     } catch (error) {
-      console.log("An Error Occured", error)
+      if (error instanceof AxiosError) {
+        toast({title: "Validation Failed", description: error.response?.data?.message, variant: "destructive"});
+      } else {
+        toast({title: "Validation Failed", description: 'An unexpected error has occurred', variant: "destructive"});
+      }
     }
     resetFormFields();
   }
