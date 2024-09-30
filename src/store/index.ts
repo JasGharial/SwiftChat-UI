@@ -4,7 +4,7 @@ import { iUser } from "@/types/user.type";
 
 interface AuthState {
   userInfo: iUser | undefined;
-  setUserInfo: (userInfo: iUser) => void;
+  setUserInfo: (userInfo: iUser | undefined) => void;
 }
 
 export const useAppStore = create<AuthState>((set) => ({

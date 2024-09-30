@@ -6,7 +6,7 @@ const ProtectedRoute = ({children}: {children: React.ReactNode}) => {
   const { userInfo } = useAppStore();
   const { toast } = useToast();
 
-  if(!userInfo) {
+  if(!userInfo || (Object.keys(userInfo).length === 0)) {
     toast({title: "Unauthorized", description: "You need to login first", variant: "destructive" });
     return <Navigate to="/auth" replace={true} />;
   }

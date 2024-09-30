@@ -24,7 +24,7 @@ const AppRoutes = () => {
         if( status === 200 && user.id) {
           setUserInfo(user);
         } else {
-          setUserInfo({} as iUser);
+          setUserInfo(undefined);
         }
         console.log(user);
       } catch(error) {
