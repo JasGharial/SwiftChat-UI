@@ -5,17 +5,48 @@ import { ArrowBigLeftDash, Trash2, ImagePlus } from "lucide-react";
 import { getColor, colors } from "@/utils/color.utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router";
+// API
+import { updateUserProfile } from "../lib"
 
 const Profile = () => {
-  const { userInfo } = useAppStore();
+  const { userInfo, setUserInfo } = useAppStore();
   const [ firstName, setFirstName ] = useState(userInfo?.first_name ?? "");
   const [ lastName, setLastName ] = useState(userInfo?.last_name ?? "");
   const [ avatar, setAvatar ] = useState(userInfo?.avatar ?? "");
   const [ hovered, setHovered ] = useState(false);
   const [ selectedColor, setSelectedColor ] = useState(0);
+  const { toast } = useToast();
+  const navigate = useNavigate();
   // TODO: Add Default Fields Object and alter it with changes
 
-  console.log(hovered);
+  const validateProfile = () => {
+    if(!firstName) {
+      toast({title: 'First Name is Required', variant: "destructive" });
+      return false;
+    }
+
+    if(!lastName) {
+      toast({title: 'First Name is Required', variant: "destructive" });
+      return false;
+    }
+
+    return true;
+  }
+
+  const saveProfileChanges = () => {
+    if(validateProfile()) {
+      const updateProfile = async () => {
+        const response = await updateUserProfile(firstName, lastName, selectedColor);
+        if(response.status === 200 && response.data) {
+          setUserInfo({...response.data});
+          navigate('/dashboard');
+        }
+      }
+      updateProfile();
+    }
+  }
 
   return (
     <div className="bg-[#1b1c24] h-[100vh] flex items-center justify-center flex-col gap-10">
@@ -102,7 +133,8 @@ const Profile = () => {
           </div>
         </div>
         <div className="w-full">
-          <Button className="h-16 w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300">
+          <Button className="h-16 w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300"
+          onClick={saveProfileChanges}>
             Save Changes
           </Button>
         </div>
